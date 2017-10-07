@@ -7,7 +7,7 @@ import enums.Direcao;
 import enums.Estado;
 import enums.LadoDaPonte;
 
-
+//Comentando a classe Carro para testar se o compartilhamento deu certo.
 public class Carro extends Thread {
 	private Integer id;
 	private Double tempoEspera;
