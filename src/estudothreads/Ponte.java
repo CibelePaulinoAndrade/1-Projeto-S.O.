@@ -11,17 +11,16 @@ public class Ponte{
 	private Prioridade prioridade;
 	private Direcao direcao;
 	private Double tamanho;
-	private Carro ultimoCarro;
-	private Semaphore semaforoMesmaDirecao;
+	private Semaphore semaforoBooleano;
 	private Carro primeiroCarro;
+	private Caminho caminhoDireita_Esquerda;
+	private Caminho caminhoEsquerda_Direita;
 	public Ponte(Prioridade prioridade, Direcao direcao, Double tamanho){
 		super();
 		this.prioridade = prioridade;
 		this.direcao = direcao;
 		this.tamanho = tamanho;
 		this.primeiroCarro = null;
-		this.ultimoCarro = null;
-		this.semaforoMesmaDirecao = new Semaphore(ManuseadorDeCarros.manuseador().getMaximoCarros());
 	}
 	public Ponte(Direcao direcao, Double tamanho) {
 		super();
@@ -29,8 +28,6 @@ public class Ponte{
 		this.direcao = direcao;
 		this.tamanho = tamanho;
 		this.primeiroCarro = null;
-		this.ultimoCarro = null;
-		this.semaforoMesmaDirecao = new Semaphore(ManuseadorDeCarros.manuseador().getMaximoCarros());
 	}
 	public static void novaPonte(Direcao direcao, Double tamanho){
 		if(instancia == null){
@@ -47,12 +44,6 @@ public class Ponte{
 	}
 	public static Ponte ponte(){
 		return instancia;
-	}
-	public Semaphore getSemaforoMesmaDirecao() {
-		return semaforoMesmaDirecao;
-	}
-	public void setSemaforoMesmaDirecao(Semaphore semaforoMesmaDirecao) {
-		this.semaforoMesmaDirecao = semaforoMesmaDirecao;
 	}
 	public Prioridade getPrioridade() {
 		return prioridade;
@@ -72,18 +63,29 @@ public class Ponte{
 	public void setTamanho(Double tamanho) {
 		this.tamanho = tamanho;
 	}
-	public Carro getUltimoCarro() {
-		return ultimoCarro;
-	}
-	public void setUltimoCarro(Carro ultimoCarro) {
-		this.ultimoCarro = ultimoCarro;
-	}
 	public Carro getPrimeiroCarro() {
 		return primeiroCarro;
 	}
 	public void setPrimeiroCarro(Carro primeiroCarro) {
 		this.primeiroCarro = primeiroCarro;
 	}
-	
+	public Semaphore getSemaforoBooleano() {
+		return semaforoBooleano;
+	}
+	public void setSemaforoBooleano(Semaphore semaforoBooleano) {
+		this.semaforoBooleano = semaforoBooleano;
+	}
+	public Caminho getCaminhoDireita_Esquerda() {
+		return caminhoDireita_Esquerda;
+	}
+	public void setCaminhoDireita_Esquerda(Caminho caminhoDireita_Esquerda) {
+		this.caminhoDireita_Esquerda = caminhoDireita_Esquerda;
+	}
+	public Caminho getCaminhoEsquerda_Direita() {
+		return caminhoEsquerda_Direita;
+	}
+	public void setCaminhoEsquerda_Direita(Caminho caminhoEsquerda_Direita) {
+		this.caminhoEsquerda_Direita = caminhoEsquerda_Direita;
+	}
 	
 }

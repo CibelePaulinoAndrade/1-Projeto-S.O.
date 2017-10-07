@@ -9,21 +9,10 @@ import enums.LadoDaPonte;
 
 public class ManuseadorDeCarros {
 	private static ManuseadorDeCarros instancia = null;
-	private List<Carro> carros;
 	private Integer maximoCarros;
 	
-	private ManuseadorDeCarros(List<Carro> carros, Integer maximoCarros){
-		this.carros = carros;
-		this.maximoCarros = maximoCarros;
-	}
 	private ManuseadorDeCarros(Integer maximoCarros){
-		this.carros = new ArrayList<Carro>();
 		this.maximoCarros = maximoCarros;
-	}
-	public static void novoManuseador(List<Carro> carros, Integer maximoCarros){
-		if(instancia==null){
-			instancia = new ManuseadorDeCarros(carros, maximoCarros);
-		}
 	}
 	public static void novoManuseador(Integer maximoCarros){
 		if(instancia==null){
@@ -33,22 +22,36 @@ public class ManuseadorDeCarros {
 	public static ManuseadorDeCarros manuseador(){
 		return instancia;
 	}
-	public void criarCarro(Double tempoEspera, Double tempoTravessia, LadoDaPonte ladodaPonte, Direcao direcao, Estado estado, Boolean vivo){
-		carros.add(new Carro(carros.size(), tempoEspera, tempoTravessia, ladodaPonte, direcao, estado));
+	public void criarCarro(Double tempoEspera, Double tempoTravessia, LadoDaPonte ladodaPonte, Direcao direcao, Estado estado, Caminho caminho){
+		caminho.getCarros().add(
+				new Carro(
+						Ponte.ponte().getCaminhoDireita_Esquerda().getCarros().size() + Ponte.ponte().getCaminhoEsquerda_Direita().getCarros().size(),
+						tempoEspera, 
+						tempoTravessia, 
+						ladodaPonte, 
+						direcao, 
+						estado
+				)
+		);
 	}
-	public void criarCarro(Double tempoEspera, Double tempoTravessia, LadoDaPonte ladodaPonte, Direcao direcao){
-		carros.add(new Carro(carros.size(), tempoEspera, tempoTravessia, ladodaPonte, direcao));
+	public void criarCarro(Double tempoEspera, Double tempoTravessia, LadoDaPonte ladodaPonte, Direcao direcao, Caminho caminho){
+		caminho.getCarros().add(
+				new Carro(
+						Ponte.ponte().getCaminhoDireita_Esquerda().getCarros().size() + Ponte.ponte().getCaminhoEsquerda_Direita().getCarros().size(), 
+						tempoEspera, 
+						tempoTravessia, 
+						ladodaPonte, 
+						direcao
+				)
+		);
 	}
 	public void iniciarCarros(){
-		for(Carro carro : carros){
+		for(Carro carro : Ponte.ponte().getCaminhoDireita_Esquerda().getCarros()){
 			carro.start();
 		}
-	}
-	public List<Carro> getCarros() {
-		return carros;
-	}
-	public void setCarros(List<Carro> carros) {
-		this.carros = carros;
+		for(Carro carro : Ponte.ponte().getCaminhoEsquerda_Direita().getCarros()){
+			carro.start();
+		}
 	}
 	public Integer getMaximoCarros() {
 		return maximoCarros;
