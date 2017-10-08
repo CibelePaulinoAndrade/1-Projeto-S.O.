@@ -39,16 +39,8 @@ public class Ponte extends Thread{
 	@Override
 	public void run() {
 		/*objetivo da ponte eh sempre tentar mudar a direcao da ponte*/
-		FileWriter fileWriter = null;
-		try {
-			fileWriter = new FileWriter("testando.txt", true);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 		try {
 			while(true){
-				//fileWriter.write("PONTE TRAVADA:");
 				
 				semaforoPonteMudaDirecao.acquire(); //espera ate poder mudar de direcao
 				semaforoLiberaCaminho.release(); //libera um caminho para ser a nova direção
@@ -56,7 +48,6 @@ public class Ponte extends Thread{
 				direcao.getCancela().getSemaforoCancelaLiberada().reducePermits(1);
 				
 				System.out.println("PONTE Mudança Direcao :" + direcao.getCaminho());
-				//fileWriter.write("PONTE Mudança Direcao :" + direcao.getName());
 			}
 		} catch (InterruptedException  e) {
 			// TODO Auto-generated catch block

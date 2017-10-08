@@ -62,7 +62,6 @@ public class Carro extends Thread {
 					caminho.getSemaforoNumeroCarrosFila().release();//aumenta numero de carros na fila
 					caminho.getCancela().getSemaforoNumeroCarrosPodemAtravessar().acquire();//espera ate que a cancela deixe-o passar
 					System.out.println("CARRO FIM AGUARDANDO INICIO ATRAVESSANDO:" + id + " ESTADO: " + estado + " Direcao :" + caminho.getCaminho());
-					//Ponte.ponte().getSemaforoPonteMudaDirecao().reducePermits(1);//se passou diminui um no indicador de mudanca de direcao
 					estado = Estado.ATRAVESSANDO;	//se passou muda estado para ateavessando 
 					tempoAtravessando = 0.0; 
 					tempoAtual = 0.0;

@@ -15,27 +15,15 @@ public class Cancela extends Thread {
 	}
 	@Override
 	public void run() {
-		FileWriter fileWriter = null;
-		try {
-			fileWriter = new FileWriter("testando.txt", true);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 		try {
 			int numeroCarrosFila = 0;
-			while(true){/*
-				semaforoCancelaLiberada.acquire();//espera ate que possa libear o caminho dos carros
-				numeroCarrosFila = caminho.getSemaforoNumeroCarrosFila().availablePermits();
-				semaforoNumeroCarrosPodemAtravessar.release(numeroCarrosFila);//libera o caminho de todos os carros que estao esperando
-				caminho.getSemaforoNumeroCarrosFila().reducePermits(numeroCarrosFila);
-				semaforoCancelaLiberada.release();*/
+			while(true){
 				semaforoCancelaLiberada.acquire();//espera ate que possa libear o caminho dos carros
 				caminho.getSemaforoNumeroCarrosFila().acquire();
+				System.out.println("Cancela Liberada");
 				semaforoNumeroCarrosPodemAtravessar.release();//libera o caminho de um carro
 				semaforoCancelaLiberada.release();//libera ela propria para pegar novos carros
 				
-				//fileWriter.write("Cancela Liberada");
 				
 			}
 		} catch (InterruptedException  e) {

@@ -22,8 +22,8 @@ public class Principal {
 		ManuseadorDeCarros.novoManuseador(10);
 		ManuseadorDeCarros manuseador = ManuseadorDeCarros.manuseador();
 		
-		manuseador.criarCarro(5.0, 5.0, direita);
-		//manuseador.criarCarro(20.0, 20.0, esquerda);
+		manuseador.criarCarro(3.0, 3.0, direita);
+		manuseador.criarCarro(15.0, 15.0, direita);
 		
 		manuseador.iniciarCarros();
 		Ponte.ponte().start();

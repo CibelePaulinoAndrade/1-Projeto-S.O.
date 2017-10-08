@@ -29,17 +29,8 @@ public class Caminho extends Thread{
 	}
 	@Override
 	public void run() {
-		FileWriter fileWriter = null;
-		try {
-			fileWriter = new FileWriter("testando.txt", true);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 		try {
 			while(true){
-				//fileWriter.write("Caminho Travado");
-				
 				/*funcao do caminho eh sempre tentar ser a nova direcao*/
 				semaforoNumeroCarrosFila.acquire(); //espera ate poder tentar ser a direcao da ponte, que é quando o primeiro carro chega na fila
 				Ponte.ponte().getSemaforoLiberaCaminho().acquire(); //quando o primeiro carro chega, espera ate ser a nova direcao da ponte
@@ -47,12 +38,9 @@ public class Caminho extends Thread{
 				//ponte liberada
 				
 				System.out.println(caminho + ": Caminho Liberado");
-				//fileWriter.write("Caminho Liberado");
 				
-				semaforoNumeroCarrosFila.release();//eu aumento um espaço na ponte, para compensar o down
+				cancela.getSemaforoNumeroCarrosPodemAtravessar().release();
 				cancela.getSemaforoCancelaLiberada().release();//libera a cancela para aceitar novos carros
-				//System.out.println(cancela.getSemaforoCancelaLiberada().availablePermits());
-				//Ponte.ponte().getSemaforoPonteMudaDirecao().release();//libera a ponte para mudar de direção
 			}
 		} catch (InterruptedException  e) {
 			// TODO Auto-generated catch block
