@@ -1,6 +1,8 @@
 package estudothreads;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import enums.Direcao;
@@ -42,6 +44,20 @@ public class ManuseadorDeCarros {
 						caminho
 				)
 		);
+	}
+	public void printCarros(){
+		ArrayList<Carro> arrayList = new ArrayList<Carro>();
+		arrayList.addAll(Ponte.ponte().getCaminhoDireita_Esquerda().getCarros());
+		arrayList.addAll(Ponte.ponte().getCaminhoEsquerda_Direita().getCarros());
+		Collections.sort(arrayList, new Comparator<Carro>() {
+			@Override
+			public int compare(Carro o1, Carro o2) {
+				return o1.getId() > o2.getId()? -1 : o1.getId() < o2.getId()?1:0;
+			}
+		});
+		for(Carro carro:arrayList)
+			System.out.print("ID: " + carro.getId() + " DIRECAO: " + carro.getCaminho().getCaminho() + " ESTADO: " + carro.getEstado() + " | ");
+		System.out.println();
 	}
 	public void iniciarCarros(){
 		for(Carro carro : Ponte.ponte().getCaminhoDireita_Esquerda().getCarros()){

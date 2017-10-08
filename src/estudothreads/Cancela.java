@@ -19,12 +19,12 @@ public class Cancela extends Thread {
 			int numeroCarrosFila = 0;
 			while(true){
 				semaforoCancelaLiberada.acquire();//espera ate que possa libear o caminho dos carros
+				//System.out.println(caminho.getSemaforoNumeroCarrosFila().availablePermits());
 				caminho.getSemaforoNumeroCarrosFila().acquire();
-				System.out.println("Cancela Liberada");
+				System.out.println("Cancela Liberada: "+caminho.getCaminho());
 				semaforoNumeroCarrosPodemAtravessar.release();//libera o caminho de um carro
 				semaforoCancelaLiberada.release();//libera ela propria para pegar novos carros
-				
-				
+								
 			}
 		} catch (InterruptedException  e) {
 			// TODO Auto-generated catch block

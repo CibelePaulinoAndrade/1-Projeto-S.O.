@@ -53,7 +53,8 @@ public class Carro extends Thread {
 					tempoEsperado += tempoAtual - tempoAnterior;
 					tempoAnterior = tempoAtual;
 					if(tempoEsperado/1000 >= tempoEspera){
-						System.out.println("CARRO FIM PARADO INICIO AGUARDANDO: " + id + " ESTADO: " + estado + " Direcao :" + caminho.getCaminho());
+						ManuseadorDeCarros.manuseador().printCarros();
+						//System.out.println("CARRO FIM PARADO INICIO AGUARDANDO: " + id + " ESTADO: " + estado + " Direcao :" + caminho.getCaminho());
 						estado = Estado.AGUARDANDO;
 						tempoEsperado = 0.0;
 					}
@@ -61,7 +62,10 @@ public class Carro extends Thread {
 				else if(estado == Estado.AGUARDANDO){
 					caminho.getSemaforoNumeroCarrosFila().release();//aumenta numero de carros na fila
 					caminho.getCancela().getSemaforoNumeroCarrosPodemAtravessar().acquire();//espera ate que a cancela deixe-o passar
-					System.out.println("CARRO FIM AGUARDANDO INICIO ATRAVESSANDO:" + id + " ESTADO: " + estado + " Direcao :" + caminho.getCaminho());
+					caminho.setnCarrosAtravessando(caminho.getnCarrosAtravessando() + 1);
+					
+					ManuseadorDeCarros.manuseador().printCarros();
+					//System.out.println("CARRO FIM AGUARDANDO INICIO ATRAVESSANDO:" + id + " ESTADO: " + estado + " Direcao :" + caminho.getCaminho());
 					estado = Estado.ATRAVESSANDO;	//se passou muda estado para ateavessando 
 					tempoAtravessando = 0.0; 
 					tempoAtual = 0.0;
@@ -72,15 +76,21 @@ public class Carro extends Thread {
 					tempoAtravessando += tempoAtual - tempoAnterior;
 					tempoAnterior = tempoAtual;
 					if(tempoAtravessando/1000 >= tempoTravessia){	//trocar isso
-						System.out.println("CARRO: FIM ATRAVESSANDO INICIO PARADO " + id + " ESTADO: " + estado + " Direcao :" + caminho.getCaminho());
-						Ponte.ponte().getSemaforoPonteMudaDirecao().release();//libera um no indicador de mudanca de direcao da ponte
+						System.out.println(". " + caminho.getnCarrosAtravessando() );
+						ManuseadorDeCarros.manuseador().printCarros();
+						//System.out.println("CARRO: FIM ATRAVESSANDO INICIO PARADO " + id + " ESTADO: " + estado + " Direcao :" + caminho.getCaminho());
+						//Ponte.ponte().getSemaforoPonteMudaDirecao().release();//libera um no indicador de mudanca de direcao da ponte
 						estado = Estado.PARADO;//muda estado
 						ManuseadorDeCarros.manuseador().mudarDirecaoCarro(this);//muda direcoa do carro
 						tempoEsperado = 0.0;
 						tempoAtual = 0.0;
 						tempoAnterior = System.currentTimeMillis();
-						if(caminho.getCarros().size() == 0)
+						caminho.setnCarrosAtravessando(caminho.getnCarrosAtravessando() - 1);
+						System.out.println(caminho.getnCarrosAtravessando());
+						if(caminho.getnCarrosAtravessando() == 0){
 							Ponte.ponte().getSemaforoPonteMudaDirecao().release();
+							//System.out.println("CHEGOU EM ZERO "+caminho.getCaminho()+" "+Ponte.ponte().getSemaforoPonteMudaDirecao().availablePermits());
+						}
 					}
 				}
 			}

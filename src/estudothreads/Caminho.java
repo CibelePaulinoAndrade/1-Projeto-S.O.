@@ -12,16 +12,18 @@ public class Caminho extends Thread{
 	private List<Carro> carros;
 	private Cancela cancela;
 	private String caminho;
-	
+	private Integer nCarrosAtravessando;
 	
 	public Caminho(Cancela cancela,
 			String caminho) {
+		this.nCarrosAtravessando = 0;
 		this.semaforoNumeroCarrosFila = new SemaforoNumeroCarrosFila(0);
 		this.cancela = cancela;
 		this.caminho = caminho;
 		this.carros = new ArrayList<Carro>();
 	}
 	public Caminho(List<Carro> carros, Cancela cancela, String caminho){
+		this.nCarrosAtravessando = 0;
 		this.semaforoNumeroCarrosFila = new SemaforoNumeroCarrosFila(0);
 		this.carros = carros;
 		this.cancela = cancela;
@@ -83,4 +85,11 @@ public class Caminho extends Thread{
 			super.reducePermits(reduction);
 		}
 	}
+	public Integer getnCarrosAtravessando() {
+		return nCarrosAtravessando;
+	}
+	public void setnCarrosAtravessando(Integer nCarrosAtravessando) {
+		this.nCarrosAtravessando = nCarrosAtravessando;
+	}
+	
 }
