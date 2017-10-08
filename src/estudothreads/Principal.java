@@ -23,7 +23,7 @@ public class Principal {
 		ManuseadorDeCarros manuseador = ManuseadorDeCarros.manuseador();
 		
 		manuseador.criarCarro(3.0, 3.0, direita);
-		manuseador.criarCarro(4.0, 4.0, direita);
+		manuseador.criarCarro(3.0, 3.0, direita);
 		
 		manuseador.iniciarCarros();
 		cancelaDir.start();

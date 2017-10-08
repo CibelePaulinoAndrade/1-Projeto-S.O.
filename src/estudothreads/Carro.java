@@ -59,13 +59,12 @@ public class Carro extends Thread {
 					}
 				}
 				else if(estado == Estado.AGUARDANDO){
-				
 					caminho.getSemaforoNumeroCarrosFila().release();//aumenta numero de carros na fila
-					
 					Log.doLog(caminho.getCaminho()+": NUMERO CARROS NA FILA: " + caminho.getSemaforoNumeroCarrosFila().availablePermits());
 					Log.doLog(ManuseadorDeCarros.manuseador().getCarros());
 					caminho.getCancela().getSemaforoNumeroCarrosPodemAtravessar().acquire();//espera ate que a cancela deixe-o passar
 					estado = Estado.ATRAVESSANDO;	//se passou muda estado para ateavessando 
+					caminho.setnCarrosAtravessando(caminho.getnCarrosAtravessando() + 1);
 					Log.doLog(ManuseadorDeCarros.manuseador().getCarros());
 					tempoAtravessando = 0.0; 
 					tempoAtual = 0.0;

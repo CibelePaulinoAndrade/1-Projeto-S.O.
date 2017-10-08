@@ -18,7 +18,6 @@ public class Cancela extends Thread {
 				semaforoCancelaLiberada.acquire();//espera ate que possa libear o caminho dos carros
 				caminho.getSemaforoNumeroCarrosFila().acquire();
 				Log.doLog(this);
-				caminho.setnCarrosAtravessando(caminho.getnCarrosAtravessando() + 1);
 				semaforoNumeroCarrosPodemAtravessar.release();//libera o caminho de um carro
 				Log.doLog(caminho);
 				semaforoCancelaLiberada.release();//libera ela propria para pegar novos carros

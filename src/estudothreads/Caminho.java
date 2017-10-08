@@ -9,6 +9,7 @@ import java.util.concurrent.Semaphore;
 public class Caminho extends Thread{
 	private SemaforoNumeroCarrosFila semaforoNumeroCarrosFila;
 
+	private static Integer cont = 0;
 	private Cancela cancela;
 	private String caminho;
 	private Integer nCarrosAtravessando;
@@ -24,13 +25,12 @@ public class Caminho extends Thread{
 		try {
 			while(true){
 				/*funcao do caminho eh sempre tentar ser a nova direcao*/
-				semaforoNumeroCarrosFila.acquire(); //espera ate poder tentar ser a direcao da ponte, que é quando o primeiro carro chega na fila
 				Ponte.ponte().getSemaforoLiberaCaminho().acquire(); //quando o primeiro carro chega, espera ate ser a nova direcao da ponte
+				semaforoNumeroCarrosFila.acquire(); //espera ate poder tentar ser a direcao da ponte, que é quando o primeiro carro chega na fila
 				Ponte.ponte().setDirecao(this); //quando ele é a direcao da ponte, seta a direcao da ponte para ele mesmo
 				//ponte liberada
 				Log.doLog("caminho liberado");
 				cancela.getSemaforoNumeroCarrosPodemAtravessar().release();
-				nCarrosAtravessando ++;
 				Log.doLog(this);
 				cancela.getSemaforoCancelaLiberada().release();//libera a cancela para aceitar novos carros
 			}
@@ -73,6 +73,8 @@ public class Caminho extends Thread{
 		return nCarrosAtravessando;
 	}
 	public void setnCarrosAtravessando(Integer nCarrosAtravessando) {
+		Log.doLog("MUDAGEM: "+nCarrosAtravessando + " CONT: "+Caminho.cont);
+		Caminho.cont ++;
 		this.nCarrosAtravessando = nCarrosAtravessando;
 	}
 	
