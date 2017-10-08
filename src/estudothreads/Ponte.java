@@ -1,60 +1,72 @@
 package estudothreads;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.ProcessBuilder.Redirect;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
 import enums.Direcao;
 import enums.Prioridade;
 
-public class Ponte{
+public class Ponte extends Thread{
 	private static Ponte instancia = null;
-	private Prioridade prioridade;
-	private Direcao direcao;
 	private Double tamanho;
-	private Semaphore semaforoBooleano;
+	private SemaforoPonteMudaDirecao semaforoPonteMudaDirecao;
+	private Semaphore semaforoLiberaCaminho;
 	private Carro primeiroCarro;
+	private Caminho direcao;
 	private Caminho caminhoDireita_Esquerda;
 	private Caminho caminhoEsquerda_Direita;
-	public Ponte(Prioridade prioridade, Direcao direcao, Double tamanho){
+	public Ponte(Caminho caminhoDireita_Esquerda, Caminho caminhoEsquerda_Direita, Double tamanho){
 		super();
-		this.prioridade = prioridade;
-		this.direcao = direcao;
+		this.direcao = null;
 		this.tamanho = tamanho;
 		this.primeiroCarro = null;
+		this.semaforoPonteMudaDirecao = new SemaforoPonteMudaDirecao(0); //no começo a ponte nao pode mudar a direcao
+		this.semaforoLiberaCaminho = new Semaphore(1);//no começo qualquer caminho pode ser a direcao
+		this.caminhoDireita_Esquerda = caminhoDireita_Esquerda;
+		this.caminhoEsquerda_Direita = caminhoEsquerda_Direita;
 	}
-	public Ponte(Direcao direcao, Double tamanho) {
-		super();
-		this.prioridade = Prioridade.NENHUMA;
-		this.direcao = direcao;
-		this.tamanho = tamanho;
-		this.primeiroCarro = null;
-	}
-	public static void novaPonte(Direcao direcao, Double tamanho){
+	public static void novaPonte(Caminho caminhoDireita_Esquerda, Caminho caminhoEsquerda_Direita, Double tamanho){
 		if(instancia == null){
-			instancia = new Ponte(direcao, tamanho);
+			instancia = new Ponte(caminhoDireita_Esquerda, caminhoEsquerda_Direita, tamanho);
 		}
-	}
-	public static void novaPonte(Prioridade prioridade, Direcao direcao, Double tamanho){
-		if(instancia == null){
-			instancia = new Ponte(prioridade, direcao, tamanho);
-		}
-	}
-	public Boolean ponteLiberada(Carro carro){
-		return carro.getDirecao() == direcao || direcao == Direcao.NENHUMA;
 	}
 	public static Ponte ponte(){
 		return instancia;
 	}
-	public Prioridade getPrioridade() {
-		return prioridade;
+	@Override
+	public void run() {
+		/*objetivo da ponte eh sempre tentar mudar a direcao da ponte*/
+		FileWriter fileWriter = null;
+		try {
+			fileWriter = new FileWriter("testando.txt", true);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			while(true){
+				//fileWriter.write("PONTE TRAVADA:");
+				
+				semaforoPonteMudaDirecao.acquire(); //espera ate poder mudar de direcao
+				semaforoLiberaCaminho.release(); //libera um caminho para ser a nova direção
+
+				direcao.getCancela().getSemaforoCancelaLiberada().reducePermits(1);
+				
+				System.out.println("PONTE Mudança Direcao :" + direcao.getCaminho());
+				//fileWriter.write("PONTE Mudança Direcao :" + direcao.getName());
+			}
+		} catch (InterruptedException  e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
-	public void setPrioridade(Prioridade prioridade) {
-		this.prioridade = prioridade;
-	}
-	public Direcao getDirecao() {
+	public Caminho getDirecao() {
 		return direcao;
 	}
-	public void setDirecao(Direcao direcao) {
+	public void setDirecao(Caminho direcao) {
 		this.direcao = direcao;
 	}
 	public Double getTamanho() {
@@ -69,11 +81,11 @@ public class Ponte{
 	public void setPrimeiroCarro(Carro primeiroCarro) {
 		this.primeiroCarro = primeiroCarro;
 	}
-	public Semaphore getSemaforoBooleano() {
-		return semaforoBooleano;
+	public SemaforoPonteMudaDirecao getSemaforoPonteMudaDirecao() {
+		return semaforoPonteMudaDirecao;
 	}
-	public void setSemaforoBooleano(Semaphore semaforoBooleano) {
-		this.semaforoBooleano = semaforoBooleano;
+	public void setSemaforoPonteMudaDirecao(SemaforoPonteMudaDirecao semaforoPonteMudaDirecao) {
+		this.semaforoPonteMudaDirecao = semaforoPonteMudaDirecao;
 	}
 	public Caminho getCaminhoDireita_Esquerda() {
 		return caminhoDireita_Esquerda;
@@ -87,5 +99,21 @@ public class Ponte{
 	public void setCaminhoEsquerda_Direita(Caminho caminhoEsquerda_Direita) {
 		this.caminhoEsquerda_Direita = caminhoEsquerda_Direita;
 	}
+	public Semaphore getSemaforoLiberaCaminho() {
+		return semaforoLiberaCaminho;
+	}
+	public void setSemaforoLiberaCaminho(Semaphore semaforoLiberaCaminho) {
+		this.semaforoLiberaCaminho = semaforoLiberaCaminho;
+	}
 	
+	class SemaforoPonteMudaDirecao extends Semaphore{
+
+		public SemaforoPonteMudaDirecao(int permits) {
+			super(permits);
+		}
+		@Override
+		public void reducePermits(int reduction) {
+			super.reducePermits(reduction);
+		}
+	}
 }

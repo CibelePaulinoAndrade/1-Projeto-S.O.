@@ -22,26 +22,24 @@ public class ManuseadorDeCarros {
 	public static ManuseadorDeCarros manuseador(){
 		return instancia;
 	}
-	public void criarCarro(Double tempoEspera, Double tempoTravessia, LadoDaPonte ladodaPonte, Direcao direcao, Estado estado, Caminho caminho){
+	public void criarCarro(Double tempoEspera, Double tempoTravessia, Estado estado, Caminho caminho){
 		caminho.getCarros().add(
 				new Carro(
 						Ponte.ponte().getCaminhoDireita_Esquerda().getCarros().size() + Ponte.ponte().getCaminhoEsquerda_Direita().getCarros().size(),
 						tempoEspera, 
 						tempoTravessia, 
-						ladodaPonte, 
-						direcao, 
-						estado
+						estado,
+						caminho
 				)
 		);
 	}
-	public void criarCarro(Double tempoEspera, Double tempoTravessia, LadoDaPonte ladodaPonte, Direcao direcao, Caminho caminho){
+	public void criarCarro(Double tempoEspera, Double tempoTravessia, Caminho caminho){
 		caminho.getCarros().add(
 				new Carro(
 						Ponte.ponte().getCaminhoDireita_Esquerda().getCarros().size() + Ponte.ponte().getCaminhoEsquerda_Direita().getCarros().size(), 
 						tempoEspera, 
 						tempoTravessia, 
-						ladodaPonte, 
-						direcao
+						caminho
 				)
 		);
 	}
@@ -52,6 +50,20 @@ public class ManuseadorDeCarros {
 		for(Carro carro : Ponte.ponte().getCaminhoEsquerda_Direita().getCarros()){
 			carro.start();
 		}
+	}
+	public void mudarDirecaoCarro(Carro carro){
+		Caminho novo, velho;
+		if(carro.getCaminho() == Ponte.ponte().getCaminhoDireita_Esquerda()){
+			novo = Ponte.ponte().getCaminhoEsquerda_Direita();
+			velho = Ponte.ponte().getCaminhoDireita_Esquerda();
+		}
+		else{
+			novo = Ponte.ponte().getCaminhoDireita_Esquerda();
+			velho = Ponte.ponte().getCaminhoEsquerda_Direita();
+		}
+		novo.getCarros().add(carro);
+		velho.getCarros().remove(carro);
+		carro.setCaminho(novo);
 	}
 	public Integer getMaximoCarros() {
 		return maximoCarros;
