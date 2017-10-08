@@ -1,7 +1,5 @@
 package estudothreads;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.concurrent.Semaphore;
 
 public class Cancela extends Thread {
@@ -16,15 +14,14 @@ public class Cancela extends Thread {
 	@Override
 	public void run() {
 		try {
-			int numeroCarrosFila = 0;
 			while(true){
 				semaforoCancelaLiberada.acquire();//espera ate que possa libear o caminho dos carros
-				//System.out.println(caminho.getSemaforoNumeroCarrosFila().availablePermits());
 				caminho.getSemaforoNumeroCarrosFila().acquire();
-				System.out.println("Cancela Liberada: "+caminho.getCaminho());
+				Log.doLog(this);
+				caminho.setnCarrosAtravessando(caminho.getnCarrosAtravessando() + 1);
 				semaforoNumeroCarrosPodemAtravessar.release();//libera o caminho de um carro
+				Log.doLog(caminho);
 				semaforoCancelaLiberada.release();//libera ela propria para pegar novos carros
-								
 			}
 		} catch (InterruptedException  e) {
 			// TODO Auto-generated catch block

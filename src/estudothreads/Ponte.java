@@ -9,10 +9,9 @@ import java.util.concurrent.Semaphore;
 import enums.Direcao;
 import enums.Prioridade;
 
-public class Ponte extends Thread{
+public class Ponte{
 	private static Ponte instancia = null;
 	private Double tamanho;
-	private SemaforoPonteMudaDirecao semaforoPonteMudaDirecao;
 	private Semaphore semaforoLiberaCaminho;
 	private Carro primeiroCarro;
 	private Caminho direcao;
@@ -23,7 +22,6 @@ public class Ponte extends Thread{
 		this.direcao = null;
 		this.tamanho = tamanho;
 		this.primeiroCarro = null;
-		this.semaforoPonteMudaDirecao = new SemaforoPonteMudaDirecao(0); //no começo a ponte nao pode mudar a direcao
 		this.semaforoLiberaCaminho = new Semaphore(1);//no começo qualquer caminho pode ser a direcao
 		this.caminhoDireita_Esquerda = caminhoDireita_Esquerda;
 		this.caminhoEsquerda_Direita = caminhoEsquerda_Direita;
@@ -35,24 +33,6 @@ public class Ponte extends Thread{
 	}
 	public static Ponte ponte(){
 		return instancia;
-	}
-	@Override
-	public void run() {
-		/*objetivo da ponte eh sempre tentar mudar a direcao da ponte*/
-		try {
-			while(true){
-				
-				semaforoPonteMudaDirecao.acquire(); //espera ate poder mudar de direcao
-				semaforoLiberaCaminho.release(); //libera um caminho para ser a nova direção
-
-				direcao.getCancela().getSemaforoCancelaLiberada().reducePermits(1);
-				
-				System.out.println("PONTE Mudança Direcao :" + direcao.getCaminho());
-			}
-		} catch (InterruptedException  e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	public Caminho getDirecao() {
 		return direcao;
@@ -72,12 +52,6 @@ public class Ponte extends Thread{
 	public void setPrimeiroCarro(Carro primeiroCarro) {
 		this.primeiroCarro = primeiroCarro;
 	}
-	public SemaforoPonteMudaDirecao getSemaforoPonteMudaDirecao() {
-		return semaforoPonteMudaDirecao;
-	}
-	public void setSemaforoPonteMudaDirecao(SemaforoPonteMudaDirecao semaforoPonteMudaDirecao) {
-		this.semaforoPonteMudaDirecao = semaforoPonteMudaDirecao;
-	}
 	public Caminho getCaminhoDireita_Esquerda() {
 		return caminhoDireita_Esquerda;
 	}
@@ -95,16 +69,5 @@ public class Ponte extends Thread{
 	}
 	public void setSemaforoLiberaCaminho(Semaphore semaforoLiberaCaminho) {
 		this.semaforoLiberaCaminho = semaforoLiberaCaminho;
-	}
-	
-	class SemaforoPonteMudaDirecao extends Semaphore{
-
-		public SemaforoPonteMudaDirecao(int permits) {
-			super(permits);
-		}
-		@Override
-		public void reducePermits(int reduction) {
-			super.reducePermits(reduction);
-		}
 	}
 }

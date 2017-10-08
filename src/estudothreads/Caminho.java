@@ -8,24 +8,14 @@ import java.util.concurrent.Semaphore;
 
 public class Caminho extends Thread{
 	private SemaforoNumeroCarrosFila semaforoNumeroCarrosFila;
-	
-	private List<Carro> carros;
+
 	private Cancela cancela;
 	private String caminho;
 	private Integer nCarrosAtravessando;
 	
-	public Caminho(Cancela cancela,
-			String caminho) {
+	public Caminho(Cancela cancela, String caminho){
 		this.nCarrosAtravessando = 0;
 		this.semaforoNumeroCarrosFila = new SemaforoNumeroCarrosFila(0);
-		this.cancela = cancela;
-		this.caminho = caminho;
-		this.carros = new ArrayList<Carro>();
-	}
-	public Caminho(List<Carro> carros, Cancela cancela, String caminho){
-		this.nCarrosAtravessando = 0;
-		this.semaforoNumeroCarrosFila = new SemaforoNumeroCarrosFila(0);
-		this.carros = carros;
 		this.cancela = cancela;
 		this.caminho = caminho;
 	}
@@ -38,10 +28,10 @@ public class Caminho extends Thread{
 				Ponte.ponte().getSemaforoLiberaCaminho().acquire(); //quando o primeiro carro chega, espera ate ser a nova direcao da ponte
 				Ponte.ponte().setDirecao(this); //quando ele é a direcao da ponte, seta a direcao da ponte para ele mesmo
 				//ponte liberada
-				
-				System.out.println(caminho + ": Caminho Liberado");
-				
+				Log.doLog("caminho liberado");
 				cancela.getSemaforoNumeroCarrosPodemAtravessar().release();
+				nCarrosAtravessando ++;
+				Log.doLog(this);
 				cancela.getSemaforoCancelaLiberada().release();//libera a cancela para aceitar novos carros
 			}
 		} catch (InterruptedException  e) {
@@ -54,12 +44,6 @@ public class Caminho extends Thread{
 	}
 	public void setSemaforoNumeroCarrosFila(SemaforoNumeroCarrosFila semaforoNumeroCarrosFila) {
 		this.semaforoNumeroCarrosFila = semaforoNumeroCarrosFila;
-	}
-	public List<Carro> getCarros() {
-		return carros;
-	}
-	public void setCarros(List<Carro> carros) {
-		this.carros = carros;
 	}
 	public Cancela getCancela() {
 		return cancela;

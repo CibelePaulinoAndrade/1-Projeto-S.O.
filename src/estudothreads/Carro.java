@@ -53,20 +53,20 @@ public class Carro extends Thread {
 					tempoEsperado += tempoAtual - tempoAnterior;
 					tempoAnterior = tempoAtual;
 					if(tempoEsperado/1000 >= tempoEspera){
-						ManuseadorDeCarros.manuseador().printCarros();
-						//System.out.println("CARRO FIM PARADO INICIO AGUARDANDO: " + id + " ESTADO: " + estado + " Direcao :" + caminho.getCaminho());
+						Log.doLog(ManuseadorDeCarros.manuseador().getCarros());
 						estado = Estado.AGUARDANDO;
 						tempoEsperado = 0.0;
 					}
 				}
 				else if(estado == Estado.AGUARDANDO){
+				
 					caminho.getSemaforoNumeroCarrosFila().release();//aumenta numero de carros na fila
-					caminho.getCancela().getSemaforoNumeroCarrosPodemAtravessar().acquire();//espera ate que a cancela deixe-o passar
-					caminho.setnCarrosAtravessando(caminho.getnCarrosAtravessando() + 1);
 					
-					ManuseadorDeCarros.manuseador().printCarros();
-					//System.out.println("CARRO FIM AGUARDANDO INICIO ATRAVESSANDO:" + id + " ESTADO: " + estado + " Direcao :" + caminho.getCaminho());
+					Log.doLog(caminho.getCaminho()+": NUMERO CARROS NA FILA: " + caminho.getSemaforoNumeroCarrosFila().availablePermits());
+					Log.doLog(ManuseadorDeCarros.manuseador().getCarros());
+					caminho.getCancela().getSemaforoNumeroCarrosPodemAtravessar().acquire();//espera ate que a cancela deixe-o passar
 					estado = Estado.ATRAVESSANDO;	//se passou muda estado para ateavessando 
+					Log.doLog(ManuseadorDeCarros.manuseador().getCarros());
 					tempoAtravessando = 0.0; 
 					tempoAtual = 0.0;
 					tempoAnterior = System.currentTimeMillis();
@@ -76,20 +76,16 @@ public class Carro extends Thread {
 					tempoAtravessando += tempoAtual - tempoAnterior;
 					tempoAnterior = tempoAtual;
 					if(tempoAtravessando/1000 >= tempoTravessia){	//trocar isso
-						System.out.println(". " + caminho.getnCarrosAtravessando() );
-						ManuseadorDeCarros.manuseador().printCarros();
-						//System.out.println("CARRO: FIM ATRAVESSANDO INICIO PARADO " + id + " ESTADO: " + estado + " Direcao :" + caminho.getCaminho());
-						//Ponte.ponte().getSemaforoPonteMudaDirecao().release();//libera um no indicador de mudanca de direcao da ponte
+						Log.doLog(ManuseadorDeCarros.manuseador().getCarros());
 						estado = Estado.PARADO;//muda estado
 						ManuseadorDeCarros.manuseador().mudarDirecaoCarro(this);//muda direcoa do carro
 						tempoEsperado = 0.0;
 						tempoAtual = 0.0;
 						tempoAnterior = System.currentTimeMillis();
 						caminho.setnCarrosAtravessando(caminho.getnCarrosAtravessando() - 1);
-						System.out.println(caminho.getnCarrosAtravessando());
 						if(caminho.getnCarrosAtravessando() == 0){
-							Ponte.ponte().getSemaforoPonteMudaDirecao().release();
-							//System.out.println("CHEGOU EM ZERO "+caminho.getCaminho()+" "+Ponte.ponte().getSemaforoPonteMudaDirecao().availablePermits());
+							caminho.getCancela().getSemaforoCancelaLiberada().reducePermits(1);
+							Ponte.ponte().getSemaforoLiberaCaminho().release(); //libera um caminho para ser a nova direção
 						}
 					}
 				}
