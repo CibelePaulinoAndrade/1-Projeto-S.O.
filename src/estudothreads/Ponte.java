@@ -11,63 +11,90 @@ import enums.Prioridade;
 
 public class Ponte{
 	private static Ponte instancia = null;
-	private Double tamanho;
-	private Semaphore semaforoLiberaCaminho;
-	private Carro primeiroCarro;
-	private Caminho direcao;
-	private Caminho caminhoDireita_Esquerda;
-	private Caminho caminhoEsquerda_Direita;
-	public Ponte(Caminho caminhoDireita_Esquerda, Caminho caminhoEsquerda_Direita, Double tamanho){
+	private Double tamanho;                     //Tamanho da ponte
+	private Semaphore liberaPonte;              //Controla o acesso a ponte
+	private Semaphore carro;                    //Número de carros na ponte
+	private Semaphore mutex;                    //Controle de regiões "criticas"
+	private Carro primeiroCarro;                //Primeiro carro 
+	private Direcao direcaoPonte;               //Direção da ponte
+	private Direcao prioridade;              //Prioridade da ponte
+	private int aux;                            //Guarda o numero de carros do outro lado da ponte +1
+	
+
+	public Ponte(Double tamanho,Direcao prioridade) {
 		super();
-		this.direcao = null;
 		this.tamanho = tamanho;
 		this.primeiroCarro = null;
-		this.semaforoLiberaCaminho = new Semaphore(1);//no começo qualquer caminho pode ser a direcao
-		this.caminhoDireita_Esquerda = caminhoDireita_Esquerda;
-		this.caminhoEsquerda_Direita = caminhoEsquerda_Direita;
+		this.direcaoPonte = Direcao.NENHUMA;
+		this.prioridade = prioridade;
+		this.liberaPonte = new Semaphore(1);
+		this.carro = new Semaphore(0);
+		this.mutex = new Semaphore(1);
+		this.aux = 0;
+		
 	}
-	public static void novaPonte(Caminho caminhoDireita_Esquerda, Caminho caminhoEsquerda_Direita, Double tamanho){
+	public static void novaPonte(Double tamanho, Direcao prioridade){
 		if(instancia == null){
-			instancia = new Ponte(caminhoDireita_Esquerda, caminhoEsquerda_Direita, tamanho);
+			instancia = new Ponte(tamanho, prioridade);
 		}
 	}
 	public static Ponte ponte(){
 		return instancia;
 	}
-	public Caminho getDirecao() {
-		return direcao;
-	}
-	public void setDirecao(Caminho direcao) {
-		this.direcao = direcao;
-	}
+
 	public Double getTamanho() {
 		return tamanho;
 	}
 	public void setTamanho(Double tamanho) {
 		this.tamanho = tamanho;
 	}
+	
 	public Carro getPrimeiroCarro() {
 		return primeiroCarro;
 	}
 	public void setPrimeiroCarro(Carro primeiroCarro) {
 		this.primeiroCarro = primeiroCarro;
 	}
-	public Caminho getCaminhoDireita_Esquerda() {
-		return caminhoDireita_Esquerda;
+	
+	public Semaphore getLiberaPonte() {
+		return liberaPonte;
 	}
-	public void setCaminhoDireita_Esquerda(Caminho caminhoDireita_Esquerda) {
-		this.caminhoDireita_Esquerda = caminhoDireita_Esquerda;
+	public void setLiberaPonte(Semaphore liberaPonte) {
+		this.liberaPonte = liberaPonte;
 	}
-	public Caminho getCaminhoEsquerda_Direita() {
-		return caminhoEsquerda_Direita;
+	
+	public Semaphore getCarro() {
+		return carro;
 	}
-	public void setCaminhoEsquerda_Direita(Caminho caminhoEsquerda_Direita) {
-		this.caminhoEsquerda_Direita = caminhoEsquerda_Direita;
+	public void setCarro(Semaphore carro) {
+		this.carro = carro;
 	}
-	public Semaphore getSemaforoLiberaCaminho() {
-		return semaforoLiberaCaminho;
+	
+	public Semaphore getMutex() {
+		return mutex;
 	}
-	public void setSemaforoLiberaCaminho(Semaphore semaforoLiberaCaminho) {
-		this.semaforoLiberaCaminho = semaforoLiberaCaminho;
+	public void setMutex(Semaphore mutex) {
+		this.mutex = mutex;
+	}
+	
+	public Direcao getDirecaoPonte() {
+		return direcaoPonte;
+	}
+	public void setDirecaoPonte(Direcao direcaoPonte) {
+		this.direcaoPonte = direcaoPonte;
+	}
+	
+	public Direcao getPrioridade() {
+		return prioridade;
+	}
+	public void setPrioridade(Direcao prioridade) {
+		this.prioridade = prioridade;
+	}
+	
+	public int getAux() {
+		return aux;
+	}
+	public void setAux(int aux) {
+		this.aux = aux;
 	}
 }

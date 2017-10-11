@@ -9,26 +9,18 @@ import enums.LadoDaPonte;
 
 public class Principal {
 	public static void main(String[] args) {
-		Cancela cancelaDir = new Cancela();
-		Caminho direita = new Caminho(cancelaDir, "DIREITA");
-		cancelaDir.setCaminho(direita);
 		
-		Cancela cancelaEsq = new Cancela();
-		Caminho esquerda = new Caminho(cancelaEsq, "ESQUERDA");
-		cancelaEsq.setCaminho(esquerda);
+		Direcao direita = Direcao.PARA_DIREITA;
+		Direcao esquerda = Direcao.PARA_ESQUERDA;
 		
-		Ponte.novaPonte(direita, esquerda, 40.0);
+		Ponte.novaPonte(50.0, direita);
 		
 		ManuseadorDeCarros.novoManuseador(10);
 		ManuseadorDeCarros manuseador = ManuseadorDeCarros.manuseador();
 		
-		manuseador.criarCarro(3.0, 3.0, direita);
-		manuseador.criarCarro(3.0, 3.0, direita);
+		manuseador.criarCarro(5.0, 9.0, direita);
+		manuseador.criarCarro(7.0, 4.0, direita);
 		
 		manuseador.iniciarCarros();
-		cancelaDir.start();
-		cancelaEsq.start();
-		direita.start();
-		esquerda.start();
 	}
 }

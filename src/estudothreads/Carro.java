@@ -10,33 +10,33 @@ import enums.LadoDaPonte;
 
 public class Carro extends Thread {
 	private Integer id;
-	private Double tempoEspera;
-	private Double tempoTravessia;
-	private Estado estado;
-	private Caminho caminho;
+	private Double tempoEspera;                 //Tempo de espera
+	private Double tempoTravessia;              //tempo de travessia
+	private Estado estado;                      //Estado do carro
+	private Direcao direcaoCarro;               //Direção do carro
 	
 	//atributos usados so aqui
 	private Double tempoEsperado;
 	private Double tempoAtravessando;
 	
 	public Carro(Integer id, Double tempoEspera, Double tempoTravessia,
-			Estado estado, Caminho caminho) {
+			Estado estado, Direcao direcaoCarro) {
 		super();
 		this.id = id;
 		this.tempoEspera = tempoEspera;
 		this.tempoTravessia = tempoTravessia;
 		this.estado = estado;
-		this.caminho = caminho;
+		this.direcaoCarro = direcaoCarro;
 	}
 	
 	public Carro(Integer id, Double tempoEspera, Double tempoTravessia,
-			Caminho caminho) {
+			Direcao direcaoCarro) {
 		super();
 		this.id = id;
 		this.tempoEspera = tempoEspera;
 		this.tempoTravessia = tempoTravessia;
 		this.estado = Estado.PARADO;
-		this.caminho = caminho;
+		this.direcaoCarro = direcaoCarro;
 	}
 
 	@Override
@@ -48,6 +48,7 @@ public class Carro extends Thread {
 		Double tempoTravessiaAtual;
 		try {
 			while(true){
+				
 				if(estado == Estado.PARADO){//conta tempo parado e depois vai para aguardando
 					tempoAtual = System.currentTimeMillis();
 					tempoEsperado += tempoAtual - tempoAnterior;
@@ -59,13 +60,18 @@ public class Carro extends Thread {
 					}
 				}
 				else if(estado == Estado.AGUARDANDO){
-					caminho.getSemaforoNumeroCarrosFila().release();//aumenta numero de carros na fila
-					Log.doLog(caminho.getCaminho()+": NUMERO CARROS NA FILA: " + caminho.getSemaforoNumeroCarrosFila().availablePermits());
-					Log.doLog(ManuseadorDeCarros.manuseador().getCarros());
-					caminho.getCancela().getSemaforoNumeroCarrosPodemAtravessar().acquire();//espera ate que a cancela deixe-o passar
-					estado = Estado.ATRAVESSANDO;	//se passou muda estado para ateavessando 
-					caminho.setnCarrosAtravessando(caminho.getnCarrosAtravessando() + 1);
-					Log.doLog(ManuseadorDeCarros.manuseador().getCarros());
+					Ponte.ponte().getMutex().acquire();
+					if((Ponte.ponte().getDirecaoPonte()== Direcao.NENHUMA)||(direcaoCarro != Ponte.ponte().getDirecaoPonte())) {
+						Ponte.ponte().setAux(Ponte.ponte().getAux() +1); 
+						Ponte.ponte().getMutex().release();
+						Log.doLog(ManuseadorDeCarros.manuseador().getCarros());
+						Ponte.ponte().setDirecaoPonte(direcaoCarro);
+						Ponte.ponte().getLiberaPonte().acquire();
+						Ponte.ponte().getMutex().acquire();
+					}
+					Ponte.ponte().getMutex().release();
+					Ponte.ponte().getCarro().release();
+					estado = Estado.ATRAVESSANDO;	//se passou muda estado para atravessando
 					tempoAtravessando = 0.0; 
 					tempoAtual = 0.0;
 					tempoAnterior = System.currentTimeMillis();
@@ -76,16 +82,18 @@ public class Carro extends Thread {
 					tempoAnterior = tempoAtual;
 					if(tempoAtravessando/1000 >= tempoTravessia){	//trocar isso
 						Log.doLog(ManuseadorDeCarros.manuseador().getCarros());
+						Ponte.ponte().getCarro().acquire();
 						estado = Estado.PARADO;//muda estado
+						Ponte.ponte().getMutex().acquire();
+						if(Ponte.ponte().getCarro().availablePermits() == 0) {
+							Ponte.ponte().getLiberaPonte().release(Ponte.ponte().getAux());
+							Ponte.ponte().setDirecaoPonte(Direcao.NENHUMA);
+						}
+						Ponte.ponte().getMutex().release();
 						ManuseadorDeCarros.manuseador().mudarDirecaoCarro(this);//muda direcoa do carro
 						tempoEsperado = 0.0;
 						tempoAtual = 0.0;
 						tempoAnterior = System.currentTimeMillis();
-						caminho.setnCarrosAtravessando(caminho.getnCarrosAtravessando() - 1);
-						if(caminho.getnCarrosAtravessando() == 0){
-							caminho.getCancela().getSemaforoCancelaLiberada().reducePermits(1);
-							Ponte.ponte().getSemaforoLiberaCaminho().release(); //libera um caminho para ser a nova direção
-						}
 					}
 				}
 			}
@@ -97,7 +105,6 @@ public class Carro extends Thread {
 	public long getId() {
 		return id;
 	}
-
 	public void setId(Integer id) {
 		this.id = id;
 	}
@@ -105,7 +112,6 @@ public class Carro extends Thread {
 	public Double getTempoEspera() {
 		return tempoEspera;
 	}
-
 	public void setTempoEspera(Double tempoEspera) {
 		this.tempoEspera = tempoEspera;
 	}
@@ -113,7 +119,6 @@ public class Carro extends Thread {
 	public Double getTempoTravessia() {
 		return tempoTravessia;
 	}
-
 	public void setTempoTravessia(Double tempoTravessia) {
 		this.tempoTravessia = tempoTravessia;
 	}
@@ -121,7 +126,6 @@ public class Carro extends Thread {
 	public Estado getEstado() {
 		return estado;
 	}
-
 	public void setEstado(Estado estado) {
 		this.estado = estado;
 	}
@@ -129,17 +133,22 @@ public class Carro extends Thread {
 	public Double getTempoEsperado() {
 		return tempoEsperado;
 	}
-
 	public void setTempoEsperado(Double tempoEsperado) {
 		this.tempoEsperado = tempoEsperado;
 	}
 
-	public Caminho getCaminho() {
-		return caminho;
+	public Direcao getDirecaoCarro() {
+		return direcaoCarro;
+	}
+	public void setDirecaoCarro(Direcao direcaoCarro) {
+		this.direcaoCarro = direcaoCarro;
 	}
 
-	public void setCaminho(Caminho caminho) {
-		this.caminho = caminho;
+	public Double getTempoAtravessando() {
+		return tempoAtravessando;
+	}
+	public void setTempoAtravessando(Double tempoAtravessando) {
+		this.tempoAtravessando = tempoAtravessando;
 	}
 	
 }

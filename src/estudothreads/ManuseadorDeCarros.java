@@ -26,25 +26,25 @@ public class ManuseadorDeCarros {
 	public static ManuseadorDeCarros manuseador(){
 		return instancia;
 	}
-	public void criarCarro(Double tempoEspera, Double tempoTravessia, Estado estado, Caminho caminho){
+	public void criarCarro(Double tempoEspera, Double tempoTravessia, Estado estado, Direcao direcaoCarro){
 		carros.add(
 			new Carro(
 				carros.size(),
 				tempoEspera, 
 				tempoTravessia, 
 				estado,
-				caminho
+				direcaoCarro
 			)
 		);
 
 	}
-	public void criarCarro(Double tempoEspera, Double tempoTravessia, Caminho caminho){
+	public void criarCarro(Double tempoEspera, Double tempoTravessia, Direcao direcaoCarro){
 		carros.add(
 			new Carro(
 					carros.size(),
 					tempoEspera, 
 					tempoTravessia, 
-					caminho
+					direcaoCarro
 			)
 		);
 	}
@@ -54,14 +54,15 @@ public class ManuseadorDeCarros {
 		}
 	}
 	public void mudarDirecaoCarro(Carro carro){
-		Caminho novo;
-		if(carro.getCaminho() == Ponte.ponte().getCaminhoDireita_Esquerda()){
-			novo = Ponte.ponte().getCaminhoEsquerda_Direita();
+		Direcao nova;
+		if(carro.getDirecaoCarro() == Direcao.PARA_DIREITA){
+			nova = Direcao.PARA_ESQUERDA;
 		}
 		else{
-			novo = Ponte.ponte().getCaminhoDireita_Esquerda();
+			nova = Direcao.PARA_DIREITA;
 		}
-		carro.setCaminho(novo);
+		carro.setDirecaoCarro(nova);
+		System.out.println("Mudou "+nova);
 	}
 	public Integer getMaximoCarros() {
 		return maximoCarros;

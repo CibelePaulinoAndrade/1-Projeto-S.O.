@@ -10,18 +10,12 @@ public class Log{
 	public static void doLog(List<Carro> carros){
 		StringBuilder builder = new StringBuilder();
 		for(Carro carro : carros){
-			builder.append("ID: " + carro.getId() + " DIRECAO: " + carro.getCaminho().getCaminho() + " ESTADO: " + carro.getEstado() + "\r\n");
+			builder.append("ID: " + carro.getId() + " DIRECAO: " + carro.getDirecaoCarro() + " ESTADO: " + carro.getEstado() + "\r\n");
 		}
 		doLog(builder.toString());
 	}
 	public static void doLog(Carro carro){
-		doLog("ID: " + carro.getId() + " DIRECAO: " + carro.getCaminho().getCaminho() + " ESTADO: " + carro.getEstado() + "\r\n");
-	}
-	public static void doLog(Caminho caminho){
-		doLog("CAMINHO: " + caminho.getCaminho() + " CARROS ATRAVESSANDO: " + caminho.getnCarrosAtravessando() + "\r\n");
-	}
-	public static void doLog(Cancela cancela){
-		doLog("CANCELA " + cancela.getCaminho().getCaminho() + "\r\n");
+		doLog("ID: " + carro.getId() + " DIRECAO: " + carro.getDirecaoCarro() + " ESTADO: " + carro.getEstado() + "\r\n");
 	}
 	public static void doLog(String texto){
 		try {
