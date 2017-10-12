@@ -12,13 +12,13 @@ import enums.Prioridade;
 public class Ponte{
 	private static Ponte instancia = null;
 	private Double tamanho;                     //Tamanho da ponte
-	private Semaphore liberaPonte;              //Controla o acesso a ponte
-	private Semaphore carro;                    //Número de carros na ponte
-	private Semaphore mutex;                    //Controle de regiões "criticas"
+	public static Semaphore liberaPonte;              //Controla o acesso a ponte
+	public static Semaphore carro;                    //Número de carros na ponte
+	public static Semaphore mutex;                    //Controle de regiões "criticas"
 	private Carro primeiroCarro;                //Primeiro carro 
 	private Direcao direcaoPonte;               //Direção da ponte
 	private Direcao prioridade;              //Prioridade da ponte
-	private int aux;                            //Guarda o numero de carros do outro lado da ponte +1
+	public static int aux;                            //Guarda o numero de carros do outro lado da ponte +1
 	
 
 	public Ponte(Double tamanho,Direcao prioridade) {

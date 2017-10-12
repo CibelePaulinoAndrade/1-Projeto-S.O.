@@ -62,11 +62,12 @@ public class Carro extends Thread {
 				else if(estado == Estado.AGUARDANDO){
 					Ponte.ponte().getMutex().acquire();
 					if((Ponte.ponte().getDirecaoPonte()== Direcao.NENHUMA)||(direcaoCarro != Ponte.ponte().getDirecaoPonte())) {
-						Ponte.ponte().setAux(Ponte.ponte().getAux() +1); 
+						Log.doLog(ManuseadorDeCarros.manuseador().getCarros());	
+						Ponte.ponte().setAux(Ponte.ponte().getAux() +1);
+						System.out.println("Aux " + Ponte.ponte().getAux());
 						Ponte.ponte().getMutex().release();
-						Log.doLog(ManuseadorDeCarros.manuseador().getCarros());
+						Ponte.ponte().getLiberaPonte().acquire();						
 						Ponte.ponte().setDirecaoPonte(direcaoCarro);
-						Ponte.ponte().getLiberaPonte().acquire();
 						Ponte.ponte().getMutex().acquire();
 					}
 					Ponte.ponte().getMutex().release();
@@ -86,8 +87,16 @@ public class Carro extends Thread {
 						estado = Estado.PARADO;//muda estado
 						Ponte.ponte().getMutex().acquire();
 						if(Ponte.ponte().getCarro().availablePermits() == 0) {
-							Ponte.ponte().getLiberaPonte().release(Ponte.ponte().getAux());
-							Ponte.ponte().setDirecaoPonte(Direcao.NENHUMA);
+							if (Ponte.ponte().getAux() <= 1 ) {
+								Ponte.ponte().getLiberaPonte().release();
+								Ponte.ponte().setDirecaoPonte(Direcao.NENHUMA);
+								Ponte.ponte().setAux(0); 
+							}
+							else {
+								Ponte.ponte().getLiberaPonte().release(Ponte.ponte().getAux()-1);
+								Ponte.ponte().setDirecaoPonte(Direcao.NENHUMA);
+								Ponte.ponte().setAux(0); 
+							}
 						}
 						Ponte.ponte().getMutex().release();
 						ManuseadorDeCarros.manuseador().mudarDirecaoCarro(this);//muda direcoa do carro
@@ -98,7 +107,6 @@ public class Carro extends Thread {
 				}
 			}
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
