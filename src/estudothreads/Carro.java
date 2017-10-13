@@ -61,17 +61,18 @@ public class Carro extends Thread {
 				}
 				else if(estado == Estado.AGUARDANDO){
 					Ponte.ponte().getMutex().acquire();
+					Log.doLog(ManuseadorDeCarros.manuseador().getCarros());	
 					if((Ponte.ponte().getDirecaoPonte()== Direcao.NENHUMA)||(direcaoCarro != Ponte.ponte().getDirecaoPonte())) {
-						Log.doLog(ManuseadorDeCarros.manuseador().getCarros());	
-						Ponte.ponte().setAux(Ponte.ponte().getAux() +1);
-						System.out.println("Aux " + Ponte.ponte().getAux());
+						if (direcaoCarro != Ponte.ponte().getDirecaoPonte() && Ponte.ponte().getDirecaoPonte() != Direcao.NENHUMA) {
+							Ponte.ponte().setAux(Ponte.ponte().getAux() + 1);
+						}
 						Ponte.ponte().getMutex().release();
-						Ponte.ponte().getLiberaPonte().acquire();						
-						Ponte.ponte().setDirecaoPonte(direcaoCarro);
+						Ponte.ponte().getLiberaPonte().acquire();
 						Ponte.ponte().getMutex().acquire();
+						Ponte.ponte().setDirecaoPonte(direcaoCarro);
 					}
-					Ponte.ponte().getMutex().release();
 					Ponte.ponte().getCarro().release();
+					Ponte.ponte().getMutex().release();
 					estado = Estado.ATRAVESSANDO;	//se passou muda estado para atravessando
 					tempoAtravessando = 0.0; 
 					tempoAtual = 0.0;
@@ -83,23 +84,24 @@ public class Carro extends Thread {
 					tempoAnterior = tempoAtual;
 					if(tempoAtravessando/1000 >= tempoTravessia){	//trocar isso
 						Log.doLog(ManuseadorDeCarros.manuseador().getCarros());
-						Ponte.ponte().getCarro().acquire();
-						estado = Estado.PARADO;//muda estado
 						Ponte.ponte().getMutex().acquire();
+						Ponte.ponte().getCarro().acquire();
 						if(Ponte.ponte().getCarro().availablePermits() == 0) {
-							if (Ponte.ponte().getAux() <= 1 ) {
-								Ponte.ponte().getLiberaPonte().release();
+							if (Ponte.ponte().getAux() == 0) {   //Significa que não tem fila 
 								Ponte.ponte().setDirecaoPonte(Direcao.NENHUMA);
-								Ponte.ponte().setAux(0); 
+								Ponte.ponte().getLiberaPonte().release();  //Libera a ponte pro proximo que chegar
+								Ponte.ponte().setAux(0);
 							}
-							else {
-								Ponte.ponte().getLiberaPonte().release(Ponte.ponte().getAux()-1);
+							else {  //Significa que tem fila
 								Ponte.ponte().setDirecaoPonte(Direcao.NENHUMA);
-								Ponte.ponte().setAux(0); 
+								Ponte.ponte().getLiberaPonte().release(Ponte.ponte().getAux()); //Libera todos os carros que estão na fila
+								Ponte.ponte().setAux(0);
 							}
+							
 						}
 						Ponte.ponte().getMutex().release();
 						ManuseadorDeCarros.manuseador().mudarDirecaoCarro(this);//muda direcoa do carro
+						estado = Estado.PARADO;//muda estado
 						tempoEsperado = 0.0;
 						tempoAtual = 0.0;
 						tempoAnterior = System.currentTimeMillis();

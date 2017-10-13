@@ -19,15 +19,15 @@ public class Principal {
 		ManuseadorDeCarros manuseador = ManuseadorDeCarros.manuseador();
 		
 		manuseador.criarCarro(5.0, 9.0, direita);
-		manuseador.criarCarro(7.0, 4.0, direita);
-		manuseador.criarCarro(3.0, 5.0, esquerda);
+		manuseador.criarCarro(7.0, 12.0, direita);
+		manuseador.criarCarro(3.0, 20.0, esquerda);
 		manuseador.criarCarro(9.0, 6.0, esquerda);
 		manuseador.criarCarro(5.0, 9.0, direita);
-		manuseador.criarCarro(7.0, 4.0, direita);
-		manuseador.criarCarro(3.0, 5.0, esquerda);
+		manuseador.criarCarro(7.0, 12.0, direita);
+		manuseador.criarCarro(3.0, 20.0, esquerda);
 		manuseador.criarCarro(9.0, 6.0, esquerda);
-		manuseador.criarCarro(7.0, 4.0, direita);
-		manuseador.criarCarro(3.0, 5.0, esquerda);
+		manuseador.criarCarro(7.0, 12.0, direita);
+		manuseador.criarCarro(3.0, 20.0, esquerda);
 		
 		manuseador.iniciarCarros();
 	}
